@@ -63,7 +63,7 @@ optional<ipv4_address> parse_ipv4_address(const const_cstring str)
     if(i == str.end())
     {
         optional<typename ipv4_address::storage_type> r = _parse_num(str);
-        if(!r)
+        if(!r.valid())
             return nil_tag();
         return ipv4_address(r.get());
     }
@@ -72,7 +72,7 @@ optional<ipv4_address> parse_ipv4_address(const const_cstring str)
         typename ipv4_address::storage_type a,b,c,d;
         optional<typename ipv4_address::storage_type> x
             = _parse_num(const_cstring(str.begin(), i));
-        if(!x)
+        if(!x.valid())
             return nil_tag();
         a = x.get();
         
@@ -81,7 +81,7 @@ optional<ipv4_address> parse_ipv4_address(const const_cstring str)
         if(i == str.end())
             return nil_tag();
         x = _parse_num(const_cstring(beg, i));
-        if(!x)
+        if(!x.valid())
             return nil_tag();
         b = x.get();
         
@@ -90,13 +90,13 @@ optional<ipv4_address> parse_ipv4_address(const const_cstring str)
         if(i == str.end())
             return nil_tag();
         x = _parse_num(const_cstring(beg, i));
-        if(!x)
+        if(!x.valid())
             return nil_tag();
         c = x.get();
         
         beg = i+1;
         x = _parse_num(const_cstring(beg, str.end()));
-        if(!x)
+        if(!x.valid())
             return false;
         d = x.get();
         

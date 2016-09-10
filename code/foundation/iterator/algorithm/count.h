@@ -51,7 +51,7 @@ struct count_impl
  * @note Strong exception guarantee.
  * */
 template <class I, class T>
-inline typename iterator_difference<I>::type count_if(
+inline typename iterator_difference<I>::type count(
     I first, I last, const T &x)
 {
     return count_impl<I>::apply(first, last, x);

@@ -40,6 +40,9 @@ struct to_integer_impl
         const_cstring str,
         const unsigned base)
     {
+        if(str.empty())
+            return optional<T>();
+        
         const char *beg = str.begin();
         const char *end = str.end();
         
@@ -119,7 +122,7 @@ inline T to_integer(
     auto r = fmt::to_integer<T, D>(str, base, nothrow_tag());
     if(!r.valid())
         n_throw(runtime_error);
-    return r;
+    return r.get();
 }
 
 /** @} */

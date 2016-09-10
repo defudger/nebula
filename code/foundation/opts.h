@@ -61,6 +61,7 @@ struct parser_callback
     inline bool argument(const_cstring id, const_cstring val, size_t i)
     {        
         bool triggered = false;
+        bool continue_ = true;
         
         auto f = [&] (auto x) 
         {
@@ -69,8 +70,10 @@ struct parser_callback
                 if(name == id)
                 {
                     triggered = true;
-                    if(!x.do_named_arg(id, val, i))
+                    if(!x.do_named_arg(id, val, i)) {
+                        continue_ = false;
                         return false;
+                    }
                     break;
                 }
             }
@@ -82,7 +85,7 @@ struct parser_callback
             ctx.input_error(id, val, i);
             return false;
         }
-        return true;
+        return continue_;
     }
     inline bool argument(const_cstring val, size_t i)
     {

@@ -150,9 +150,12 @@ public:
             other.swap(*this);
     }
     
+    #if 0
+    // Automatic conversion was a bad idea!
     inline operator bool () const noexcept {
         return good;
     }
+    #endif
     inline bool valid() const noexcept {
         return good;
     }

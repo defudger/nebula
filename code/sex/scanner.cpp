@@ -41,30 +41,43 @@ inline bool is_digit(const char c) noexcept
     return 47 < c && c < 58; // 0..9
 }
 //------------------------------------------------------------------------------
-inline bool is_visible(const char c) noexcept
+inline bool is_allowed(const char c) noexcept
 {
+    // !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+
     return is_alpha(c) || is_digit(c)
-        || '+' == c
-        || '-' == c
-        || '*' == c
-        || '/' == c
-        || '_' == c
-        || '=' == c
-        || '?' == c
+        || '!' == c
+        // || '"' == c
+        || '#' == c
         || '$' == c
         || '%' == c
         || '&' == c
-        || '#' == c
-        || '&' == c
-        || '~' == c
-        || '<' == c
-        || '>' == c
-        || '.' == c
         || '\'' == c
+        // || '(' == c
+        // || ')' == c
+        || '*' == c
+        || '+' == c
+        || ',' == c
+        || '-' == c
+        || '.' == c
+        || '/' == c
         || ':' == c
+        || ';' == c
+        || '<' == c
+        || '=' == c
+        || '>' == c
+        || '?' == c
+        || '@' == c
+        || '[' == c
+        // || '\\' == c
+        || ']' == c
         || '^' == c
+        || '_' == c
+        || '`' == c
+        || '{' == c
         || '|' == c
-        || '@' == c;
+        || '}' == c
+        || '~' == c;
 }
 
 //------------------------------------------------------------------------------
@@ -199,27 +212,22 @@ fnd::tuple<token, fnd::const_cstring> scan(fnd::const_cstring s)
                     fnd::const_cstring val = fnd::const_cstring{s.begin(), i};
                     s = {i+1, s.end()};
                     
-                    // so it fits into 32 bit unsigned int.
-                    if(val.size() > 9)
-                    {
+                    auto l_ = fnd::fmt::to_integer<uint32_t>(
+                        val, 10, fnd::nothrow_tag());
+                    if(!l_.valid())
                         return {token{token_id::invalid, val}, s};
-                    }
-                    if(val.front() == '0')
-                    {
+                    const size_t l = l_.get();
+                    if(0 == l)
                         return {token{token_id::invalid, val}, s};
-                    }
-                    const size_t l = fnd::fmt::to_integer<size_t>(val);
                     if(l > s.size())
-                    {
                         return {token{token_id::invalid, val}, s};
-                    }
                     const fnd::const_cstring data = {
                         s.begin(),
                         s.begin()+l};
                     return {token{token_id::data, data},
                         fnd::const_cstring{data.end(), s.end()}};
                 }
-                if(!is_visible(*i))
+                if(!is_allowed(*i))
                 {
                     return {
                         token{
@@ -230,7 +238,7 @@ fnd::tuple<token, fnd::const_cstring> scan(fnd::const_cstring s)
                 ++i;
             }
             
-            for( ; i != s.end() && is_visible(*i); ++i)
+            for( ; i != s.end() && is_allowed(*i); ++i)
                 ; // empty
             
             if(s.begin() == i)
